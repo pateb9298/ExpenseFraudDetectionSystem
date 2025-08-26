@@ -1,7 +1,8 @@
 //Import required packages
+require("dotenv").config(); //Load environment variables from .env file
+console.log("MONGO_URI:", process.env.MONGO_URI);
 const express = require("express"); //Framework for building APIs
 const mongoose = require("mongoose"); //Library for MongoDB object modeling
-require("dotenv").config(); //Load environment variables from .env file
 
 const app = express(); //Initialize Express app
 

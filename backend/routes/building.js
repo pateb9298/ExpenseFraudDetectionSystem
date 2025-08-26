@@ -1,6 +1,6 @@
 //Import dependencies
 const express = require('express');
-const Building = require('../models/Building'); //Our  Building model
+const Building = require('../models/Buildings'); //Our  Building model
 const router = express.Router();
 
 //Route: Add a new building
@@ -19,6 +19,7 @@ router.post("/", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
     });
+
 
 //Route: Get all buildings
 //GET /building
