@@ -34,5 +34,13 @@ router.get("/", async (req, res) => {
     }
     });
 
+router.delete("/", async (req,res) => {
+    try {
+        await Building.deleteMany({});
+        res.json({ message: "All buildings deleted" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
 //Export router so server.js can use it
 module.exports = router;
