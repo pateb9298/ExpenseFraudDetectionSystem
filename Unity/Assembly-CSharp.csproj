@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\BackendManager.cs" />
     <Compile Include="Assets\Scripts\GPSConverter.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
+    <Compile Include="Assets\Scripts\BuildingSpawner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
