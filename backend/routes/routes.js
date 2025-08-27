@@ -1,19 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Route = require('../models/Route'); // Our Route model
+const Building = require('../models/Buildings'); // Our Route model
+const axios = require('axios');
+
 
 // Temporary in-memory storage
-
-// GET /routes - return all routes
-router.get("/", async (req, res) => {
-    try {
-        //Fetch all building documents from MongoDB
-        const routes = await Route.find();
-        res.json(routes);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-    });
 
 // POST /routes - add one or multiple routes
 router.post("/", async (req, res) => {

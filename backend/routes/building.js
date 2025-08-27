@@ -12,9 +12,11 @@ const router = express.Router();
 //res is short for response (used to send something back to client), async means use await inside the function
 router.post("/", async (req, res) => {
     try {
-        const building = new Building(req.body);
-        await building.save();
-        res.json(building);
+        const q = req.query.query;
+        const buildings = await Building.find({
+            name: {$regex: q, $options: "i"}
+        });
+        res.json(buildings);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
