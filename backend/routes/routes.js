@@ -14,6 +14,10 @@ function straightLineRoute(origin, destination, steps = 20) {
     return points;
 }
 
+// In-memory storage for route history (for testing)
+const routeHistory = [];
+
+// POST /routes - get directions from origin to a building
 router.post("/", async (req, res) => {
     try {
         const { from, to } = req.body;
@@ -24,33 +28,50 @@ router.post("/", async (req, res) => {
 
         const dest = building.entrances?.[0] || building.centroid;
 
-        // try Google Directions API
+        // Try Google Directions API
         const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${from.latitude},${from.longitude}&destination=${dest.latitude},${dest.longitude}&mode=walking&key=${process.env.GOOGLE_MAPS_KEY}`;
         const response = await axios.get(url);
 
+        let polyline;
+        let source;
+
         if (response.data.routes && response.data.routes.length > 0) {
-            const steps = response.data.routes[0].overview_polyline.points;
-            return res.json({ polyline: steps, destination: dest, source: "google" });
+            polyline = response.data.routes[0].overview_polyline.points;
+            source = "google";
+        } else {
+            polyline = straightLineRoute(from, dest);
+            source = "straightLine";
         }
 
-        // fallback to straight line if Google returned no routes
-        const straight = straightLineRoute(from, dest);
-        return res.json({ polyline: straight, destination: dest, source: "straightLine" });
+        // Save to in-memory history for GET testing
+        routeHistory.push({ from, to: building.name, polyline, source });
+
+        return res.json({ polyline, destination: dest, source });
 
     } catch (error) {
-        // also fallback if API call fails
+        console.error(error);
+        // fallback if API fails
         try {
             const { from, to } = req.body;
             const building = await Building.findById(to.buildingId);
             const dest = building?.entrances?.[0] || building?.centroid;
             if (dest) {
                 const straight = straightLineRoute(from, dest);
+                routeHistory.push({ from, to: building.name, polyline: straight, source: "straightLine" });
                 return res.json({ polyline: straight, destination: dest, source: "straightLine" });
             }
         } catch (_) {}
+
         res.status(500).json({ error: error.message });
     }
 });
 
-module.exports = router;
+// GET /routes - return all previous routes (for Unity testing)
+router.get("/", (req, res) => {
+    if (routeHistory.length === 0) {
+        return res.json({ message: "No routes requested yet." });
+    }
+    res.json(routeHistory);
+});
 
+module.exports = router;
