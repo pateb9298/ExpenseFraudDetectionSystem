@@ -43,4 +43,16 @@ router.post("/login", async (req, res) => {
 
 });
 
+router.post("/addTransaction", async(req, res) => {
+    try {
+        const {merchant, amount, category, paymentMethod, date, location, description} = req.body;
+        const transaction = new Transaction({merchant, amount, category, paymentMethod, date, location, description})
+        await transaction.save
+        res.status(201).json({message: "Transaction saved successfully"});
+    }
+    catch(err){
+        res.status(500).json({error: err.message});
+    }
+})
+
 module.exports = router
