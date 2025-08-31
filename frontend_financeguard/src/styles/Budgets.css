@@ -1,0 +1,269 @@
+/* Navbar (reuse same style for consistency) */
+.navbar {
+  width: 100%;
+  background: #fff;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar-logo {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.navbar-links li a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.navbar-links li a:hover {
+  color: #007bff;
+}
+
+/* Budgets Page */
+.budgets-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.budgets-header h2 {
+  font-size: 24px;
+  margin: 0;
+}
+
+.budgets-header p {
+  color: #666;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.new-budget-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.new-budget-btn:hover {
+  background: #0056b3;
+}
+
+.budgets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.budget-card {
+  background: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.budget-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.budget-icon {
+  font-size: 22px;
+}
+
+.budget-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.spent-amount {
+  font-weight: bold;
+}
+
+.budget-progress {
+  width: 100%;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 6px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background: #007bff;
+  transition: width 0.3s ease-in-out;
+}
+
+.progress-bar.over {
+  background: #dc3545;
+}
+
+.budget-limits {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #555;
+}
+
+.budget-status {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.budget-status.under-budget {
+  color: green;
+}
+
+.budget-status.over-budget {
+  color: red;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+
+  /* Make it always full width and stick to top */
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* higher so it stays above cards/forms */
+}
+
+.navbar-logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #4f46e5;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-links li a {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-links li a:hover {
+  color: #4f46e5;
+}
+
+
+/* Modal overlay */
+/* Modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+/* Modal box */
+.modal {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 500px;              /* wider modal */
+  max-width: 90%;            /* responsive */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  animation: fadeIn 0.3s ease-in-out;
+  box-sizing: border-box;
+}
+
+.modal h3 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.budget-form label {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.budget-form input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* Action buttons */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.form-actions button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.form-actions button[type="submit"] {
+  background: #007bff;
+  color: #fff;
+}
+
+.form-actions button[type="submit"]:hover {
+  background: #0056b3;
+}
+
+.form-actions button[type="button"] {
+  background: #e0e0e0;
+}
+
+.form-actions button[type="button"]:hover {
+  background: #c2c2c2;
+}

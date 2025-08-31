@@ -1,0 +1,368 @@
+/* Global styles */
+body {
+  margin: 0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e0e7ff 100%);
+  color: #111827;
+  min-height: 100vh;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: -50px;
+  left: -50px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle at center, #c7d2fe 0%, transparent 70%);
+  opacity: 0.3;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -50px;
+  right: -50px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle at center, #fcd34d 0%, transparent 70%);
+  opacity: 0.2;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.dashboard {
+  position: relative;
+  z-index: 1;
+  padding-bottom: 2rem;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #4f46e5;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-links li a {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-links li a:hover {
+  color: #4f46e5;
+}
+
+/* Motto Box */
+.motto-box {
+  background: linear-gradient(135deg, #1f2937, #374151);
+  color: #fff;
+  padding: 3rem 2rem;
+  margin: 2rem 1.5rem;
+  border-radius: 16px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.motto-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.motto-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #facc15; 
+}
+
+.motto-text {
+  font-size: 1.2rem;
+  font-style: italic;
+  color: #e5e7eb;
+}
+
+/* Top Cards */
+.top-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin: 2rem;
+}
+
+.card {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 16px;
+  min-height: 180px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: #c7d2fe;
+  box-shadow: 0 6px 18px rgba(79,70,229,0.08);
+}
+
+.card h3 {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.subtext {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.subtext.red { color: #dc2626; }
+.subtext.green { color: #16a34a; }
+
+/* Alerts */
+.alerts {
+  margin: 2rem;
+  padding: 1.5rem;
+  border-radius: 16px;
+  background: #fff5f5;
+  border: 1px solid #fcdcdc;
+}
+
+.alerts h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #b91c1c;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Alert Cards */
+.alert-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.risk-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  color: white;
+}
+
+.risk-badge.high { background: #dc2626; }
+.risk-badge.medium { background: #f59e0b; }
+
+.timestamp {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.alert-card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0.3rem 0;
+}
+
+.location {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-bottom: 0.25rem;
+}
+
+.note {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+/* Buttons */
+.alert-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+button.approve {
+  background: #dcfce7;
+  color: #16a34a;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button.approve:hover {
+  background: #bbf7d0;
+}
+
+button.block {
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button.block:hover {
+  background: #fca5a5;
+}
+
+/* Bottom Section */
+.bottom-section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin: 2rem;
+}
+
+.transactions, .budget {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  min-height: 400px;
+}
+
+.transactions h2, .budget h2 {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+/* Transactions */
+.transactions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.transactions li {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.95rem;
+}
+
+.transactions li.flagged {
+  background: #fef2f2;
+  color: #b91c1c;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.expense {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Budget Progress */
+.progress {
+  margin: 1rem 0;
+}
+
+.progress label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.bar {
+  height: 12px;
+  width: 100%;
+  background: #f3f4f6;
+  border-radius: 6px;
+  margin: 0.3rem 0;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.3s ease-in-out;
+}
+
+.fill.green { background: #16a34a; }
+.fill.orange { background: #f59e0b; }
+.fill.red { background: #dc2626; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+/* Charts Section */
+.charts-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin: 2rem;
+}
+
+.chart-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+}
+
+.chart-card h3 {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}

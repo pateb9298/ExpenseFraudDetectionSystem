@@ -1,0 +1,203 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #4f46e5;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-links li a {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-links li a:hover {
+  color: #4f46e5;
+}
+
+/* Container */
+.transactions-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  font-family: "Inter", sans-serif;
+  color: #1a1a1a;
+}
+
+/* Title */
+.transactions-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.transactions-subtitle {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+/* Search Row */
+.transactions-search-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.transactions-search {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
+.transactions-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1rem;
+  background: #f4f6f8;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+/* Transaction List */
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.transaction-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  transition: background 0.2s ease;
+}
+
+.transaction-item:hover {
+  background: #f1f3f5;
+}
+
+.transaction-item.flagged {
+  background: #ffecec;
+  border: 1px solid #ffbaba;
+}
+
+/* Left side */
+.transaction-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.flagged-icon {
+  color: #d9534f;
+  font-size: 1.2rem;
+}
+
+.transaction-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.transaction-merchant {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.transaction-date {
+  color: #777;
+  font-size: 0.85rem;
+}
+
+/* Category tags */
+.category-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.category-tag.food {
+  background: #ffe7d1;
+  color: #b35b00;
+}
+
+.category-tag.shopping {
+  background: #f0d9ff;
+  color: #5c2d91;
+}
+
+.category-tag.transport {
+  background: #dff3ff;
+  color: #006494;
+}
+
+.category-tag.other {
+  background: #e7e7e7;
+  color: #444;
+}
+
+/* Right side */
+.transaction-right {
+  text-align: right;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1a1a1a;
+}
+
+.flagged-details {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+}
+
+.flagged-badge {
+  background: #d9534f;
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.risk-score {
+  color: #d9534f;
+}

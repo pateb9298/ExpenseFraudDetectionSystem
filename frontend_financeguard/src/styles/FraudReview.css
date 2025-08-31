@@ -1,0 +1,196 @@
+/* Container */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-logo {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #4f46e5;
+}
+
+.navbar-links {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-links li a {
+  text-decoration: none;
+  color: #374151;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar-links li a:hover {
+  color: #4f46e5;
+}
+
+.fraud-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+}
+.fraud-toggle:hover {
+  color: #000;
+}
+
+.fraud-container {
+  max-width: 850px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  font-family: "Inter", sans-serif;
+  color: #1a1a1a;
+}
+
+/* Titles */
+.fraud-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.fraud-subtitle {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+/* Tabs */
+.fraud-tabs {
+  display: flex;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.fraud-tab {
+  flex: 1;
+  padding: 0.8rem;
+  background: #f8f9fa;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-weight: 500;
+  color: #555;
+}
+
+.fraud-tab.active {
+  background: #fff;
+  color: #111;
+  border: 1px solid #ddd;
+  border-bottom: 1px solid #fff;
+}
+
+/* Section title */
+.fraud-section-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Fraud item */
+.fraud-item {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.fraud-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.fraud-icon {
+  color: #d9534f;
+  font-size: 1.1rem;
+}
+
+.fraud-merchant {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.fraud-risk {
+  background: #ffe0e0;
+  color: #d9534f;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.fraud-amount {
+  font-size: 0.95rem;
+  margin-bottom: 0.75rem;
+  color: #444;
+}
+
+/* Reason box */
+.fraud-reason {
+  background: #f5f7fa;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 0.75rem;
+}
+
+/* Notes input */
+.fraud-notes {
+  width: 100%;
+  min-height: 70px;
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: vertical;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* Actions */
+.fraud-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.approve-btn {
+  background: #28a745;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.reject-btn {
+  background: #f5c6cb;
+  color: #a94442;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
