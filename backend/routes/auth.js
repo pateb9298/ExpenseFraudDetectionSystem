@@ -3,6 +3,7 @@ const express = require('express');
 const User = require('../models/User'); //Our  Building model
 const bcrypt = require("bcrypt.js")
 const jwt = require("jsonwebtoken");
+const Transaction = require('../models/Transaction');
 
 const router = express.Router();
 
@@ -54,5 +55,48 @@ router.post("/addTransaction", async(req, res) => {
         res.status(500).json({error: err.message});
     }
 })
+
+
+router.get("/getAllTransactions", async(req, res) => {
+    try{
+        const transactions = await Transaction.find().sort({date: -1});
+        res.status(200).json(transactions);
+    }
+    catch (err){
+        res.status(500).json({error: "Server error while fetching transactions"});
+    }
+});
+
+router.get("/search", async(req, res)=>{
+    try {
+        const {merchant, description} = req.query
+
+        let filter = {};
+
+        if (merchant){
+            filter.merchant = {$regex: merchant, $options: "i"};
+        }
+
+        if (description){
+            filter.description = {$regex: description, $options: "i"};
+        }
+
+        if (category){
+            filter.category = category;
+        }
+
+        const transactions = await Transaction.find(filter).sort({date: -1});
+        
+        if (!transactions.length){
+            return res.status(200).json({message: "No transactions found"});
+        }
+
+        res.status(200).json(transactions);
+    }
+    catch (err){
+        res.status(500).json({error: "Server error while searching transactions"});
+    }
+
+});
 
 module.exports = router
