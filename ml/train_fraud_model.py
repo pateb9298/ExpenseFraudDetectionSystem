@@ -7,6 +7,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
+import shap
 
 df = pd.read_csv("data/archive/CreditCardData.csv")
 

@@ -2,6 +2,9 @@ from flask import Flask, request, jsonify
 import joblib
 import numpy as np
 import pandas as pd
+import shap
+# from sklearn.pipeline import Pipeline
+
 
 app = Flask(__name__)
 
@@ -11,6 +14,7 @@ model = joblib.load("fraud_model.pkl")
 
 conversion_rates = {"GBP": 0.87, "USD": 1.17, "EUR": 1, "CAD": 1.61}
 
+explainer = shap.TreeExplainer(model.named_steps['classifier'])
 
 @app.route("/predict", methods = ["POST"])
 def predict():
@@ -47,7 +51,13 @@ def predict():
 
     #runs the trained RandomForest on this input and returns 0 (legit) or 1 (fraud)
     prediction = model.predict(input_df)[0] # 0=legit, 1=fraud
-    return jsonify({"fraud": bool(prediction)})
+
+    shap_values = explainer.shap_values(input_df)
+    feature_contributions = dict(zip(input_df.columns, shap_values[1][0]))
+
+    top_features = sorted(feature_contributions.items(), key=lambda x: x[1], reverse=True)[:3]
+    reason = [f"{feat} = {val:.2f}" for feat, val in top_features]
+    return jsonify({"fraud": bool(prediction), "reason": reason})
 
 if __name__ == "__main__":
     app.run(port=5001, debug=True)
