@@ -2,7 +2,7 @@
 node_modules
 
 .utmp/
-/ml/data/archive/creditcard_2023.csv
+/ml/data/archive/CreditCardData.csv
 /ml/data/archive.zip
 
 Unity/[Ll]ibrary/

@@ -3,17 +3,35 @@ import joblib
 from sklearn.model_selection import train_test_split #split dataset into training and testing sets
 from sklearn.ensemble import RandomForestClassifier #machine learning algorithm used for classification
 from sklearn.metrics import classification_report, confusion_matrix#detailed summary on model's performance 
+import re
+from sklearn.impute import SimpleImputer
 
 
-df = pd.read_csv("data/archive/creditcard_2023.csv")  # path to your CSV
+df = pd.read_csv("data/archive/CreditCardData.csv")  # path to your CSV
 
 #Quick Look at the data
 print("First 5 rows of the dataset:")
 print(df.head())
 
+df["Amount_clean"] = df["Amount"].str.replace(r'[^\d.]', '', regex=True).astype(float)
+conversion_rates = {"GBP": 0.87, "USD": 1.17, "EUR": 1, "CAD": 1.61}
+df["Amount_eur"] = df.apply(
+    lambda row: row['Amount_clean'] * conversion_rates.get(row["Currency"], 1.0),
+    axis=1
+)
+
+df = df.drop(column=["Transaction_ID"])
+
+num_inputer = SimpleImputer(strategy = "median")
+df[["Age", "Amount_eur"]] = num_imputer.fit_transform(df[["Age", "Amount_usd"]])
+
+cat_imputer = SimpleImputer(strategy="constant", fill_value = "Unknown")
+categorical_cols = ["Shipping Address", "Gender", "Type_of_Card", "Entry_Mode", "Merchant_Group", "Country_of_Transaction", "Country_of_Residence", "Bank"]
+df[categorical_cols] = cat_imputer.fit_transform(df[categorical_cols])
+
 #Seperate features (X) and Labels (y)
-X = df.drop('Class', axis=1) #All columns except 'Class' are features
-y = df['Class'] #'Class' is our target: 0=legit, 1=fraud
+X = df.drop('Fraud', axis=1) #All columns except 'Class' are features
+y = df['Fraud'] #'Class' is our target: 0=legit, 1=fraud
 
 #Split the data into training and testing sets (80% train, 20% test)
 #random_state ensures same split every time run the code
