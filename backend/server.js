@@ -12,7 +12,7 @@ app.use(express.json());
 
 // Enable CORS for your frontend
 app.use(cors({
-  origin: ["http://localhost:3000","https://silly-trifle-88e47e.netlify.app"],
+  origin: ["http://localhost:3000","https://financeguardai.netlify.app"],
   credentials: true
 }));
 
