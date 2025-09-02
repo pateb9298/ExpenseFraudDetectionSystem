@@ -33,7 +33,6 @@ export default function AddTransaction() {
     try {
       const { data } = await addTransaction(formData);
       alert(data.message || "Transaction added successfully!");
-      // reset form
       setFormData({
         age: "",
         amount: "",
@@ -54,9 +53,7 @@ export default function AddTransaction() {
       setStep(1);
     } catch (err) {
       console.error(err);
-      console.error("Full error:", err);
       alert(JSON.stringify(err.response?.data || err.message));
-
     }
   };
 
@@ -89,7 +86,7 @@ export default function AddTransaction() {
           <div className={`step ${step === 3 ? "active" : ""}`}><span>3</span> Review & Submit</div>
         </div>
 
-        {/* === Step 1 === */}
+        {/* Step 1 */}
         {step === 1 && (
           <div className="form-card">
             <h2 className="form-title">💳 Transaction Info</h2>
@@ -98,25 +95,58 @@ export default function AddTransaction() {
                 <label>Amount *</label>
                 <input type="number" name="amount" value={formData.amount} onChange={handleChange} required />
               </div>
+
               <div className="form-group">
                 <label>Currency *</label>
-                <input type="text" name="currency" value={formData.currency} onChange={handleChange} required />
+                <select name="currency" value={formData.currency} onChange={handleChange} required>
+                  <option value="">Select</option>
+                  <option value="GBP">GBP</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                  <option value="CAD">CAD</option>
+                </select>
               </div>
+
               <div className="form-group">
                 <label>Type of Transaction *</label>
-                <input type="text" name="typeOfTransaction" value={formData.typeOfTransaction} onChange={handleChange} required />
+                <select name="typeOfTransaction" value={formData.typeOfTransaction} onChange={handleChange} required>
+                  <option value="">Select</option>
+                  <option value="POS">POS</option>
+                  <option value="Online">Online</option>
+                  <option value="ATM">ATM</option>
+                </select>
               </div>
+
               <div className="form-group">
                 <label>Entry Mode *</label>
-                <input type="text" name="entryMode" value={formData.entryMode} onChange={handleChange} required />
+                <select name="entryMode" value={formData.entryMode} onChange={handleChange} required>
+                  <option value="">Select</option>
+                  <option value="PIN">PIN</option>
+                  <option value="CVC">CVC</option>
+                  <option value="TAP">TAP</option>
+                </select>
               </div>
+
               <div className="form-group">
                 <label>Type of Card *</label>
-                <input type="text" name="typeOfCard" value={formData.typeOfCard} onChange={handleChange} required />
+                <select name="typeOfCard" value={formData.typeOfCard} onChange={handleChange} required>
+                  <option value="">Select</option>
+                  <option value="VISA">VISA</option>
+                  <option value="MasterCard">MasterCard</option>
+                </select>
               </div>
+
               <div className="form-group">
-                <label>Bank *</label>
-                <input type="text" name="bank" value={formData.bank} onChange={handleChange} required />
+                <label>Bank (optional)</label>
+                <select name="bank" value={formData.bank} onChange={handleChange}>
+                  <option value="">Select</option>
+                  <option value="Barclays">Barclays</option>
+                  <option value="RBS">RBS</option>
+                  <option value="Monzo">Monzo</option>
+                  <option value="HSBC">HSBC</option>
+                  <option value="Halifax">Halifax</option>
+                  <option value="Lloyds">Lloyds</option>
+                </select>
               </div>
             </div>
 
@@ -127,7 +157,7 @@ export default function AddTransaction() {
           </div>
         )}
 
-        {/* === Step 2 === */}
+        {/* Step 2 */}
         {step === 2 && (
           <div className="form-card">
             <h2 className="form-title">📋 Details</h2>
@@ -136,30 +166,68 @@ export default function AddTransaction() {
                 <label>Age</label>
                 <input type="number" name="age" value={formData.age} onChange={handleChange} />
               </div>
+
               <div className="form-group">
                 <label>Gender</label>
                 <select name="gender" value={formData.gender} onChange={handleChange}>
                   <option value="">Select</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
+                  <option value="M">M</option>
+                  <option value="F">F</option>
                 </select>
               </div>
+
               <div className="form-group">
                 <label>Merchant Group</label>
-                <input type="text" name="merchantGroup" value={formData.merchantGroup} onChange={handleChange} />
+                <select name="merchantGroup" value={formData.merchantGroup} onChange={handleChange}>
+                  <option value="">Select</option>
+                  <option value="Children">Children</option>
+                  <option value="Restaurant">Restaurant</option>
+                  <option value="Services">Services</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Food">Food</option>
+                  <option value="Products">Products</option>
+                  <option value="Fashion">Fashion</option>
+                  <option value="Gaming">Gaming</option>
+                </select>
               </div>
+
               <div className="form-group">
                 <label>Country of Transaction</label>
-                <input type="text" name="countryOfTransaction" value={formData.countryOfTransaction} onChange={handleChange} />
+                <select name="countryOfTransaction" value={formData.countryOfTransaction} onChange={handleChange}>
+                  <option value="">Select</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="USA">USA</option>
+                  <option value="India">India</option>
+                  <option value="Russia">Russia</option>
+                  <option value="China">China</option>
+                  <option value="Canada">Canada</option>
+                </select>
               </div>
+
               <div className="form-group">
                 <label>Country of Residence</label>
-                <input type="text" name="countryOfResidence" value={formData.countryOfResidence} onChange={handleChange} />
+                <select name="countryOfResidence" value={formData.countryOfResidence} onChange={handleChange}>
+                  <option value="">Select</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="USA">USA</option>
+                  <option value="India">India</option>
+                  <option value="Russia">Russia</option>
+                  <option value="China">China</option>
+                  <option value="Canada">Canada</option>
+                </select>
               </div>
+
               <div className="form-group">
-                <label>Shipping Address</label>
-                <input type="text" name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} />
+                <label>Shipping Address (optional)</label>
+                <select name="shippingAddress" value={formData.shippingAddress} onChange={handleChange}>
+                  <option value="">Select</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="USA">USA</option>
+                  <option value="India">India</option>
+                  <option value="Russia">Russia</option>
+                  <option value="China">China</option>
+                  <option value="Canada">Canada</option>
+                </select>
               </div>
             </div>
 
@@ -170,7 +238,7 @@ export default function AddTransaction() {
           </div>
         )}
 
-        {/* === Step 3 === */}
+        {/* Step 3 */}
         {step === 3 && (
           <div className="form-card">
             <h2 className="form-title">📝 Review & Submit</h2>
@@ -184,7 +252,7 @@ export default function AddTransaction() {
                 <input type="time" name="time" value={formData.time} onChange={handleChange} />
               </div>
               <div className="form-group full-width">
-                <label>Description</label>
+                <label>Description (optional)</label>
                 <textarea name="description" value={formData.description} onChange={handleChange} />
               </div>
             </div>

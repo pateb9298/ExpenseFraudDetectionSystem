@@ -69,8 +69,12 @@ def predict():
     top_features = sorted(feature_contributions.items(), key=lambda x: x[1], reverse=True)[:3]
     reason = [f"{feat} = {val:.2f}" for feat, val in top_features]
 
+    prob = model.predict_proba(input_df)[0][1]  # Probability of fraud (class 1)
+    risk_score = float(prob)  # Convert to float for JSON
+
     return jsonify({
         "fraud": bool(prediction),
+        "riskScore": risk_score,
         "reason": reason
     })
 

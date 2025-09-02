@@ -3,6 +3,7 @@ const express = require('express');
 const User = require('../models/User'); //Our  Building model
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Budget = require("../models/Budget");
 const Transaction = require('../models/Transaction');
 const axios = require("axios")
 
@@ -68,13 +69,35 @@ router.use(auth);
 
 router.get("/fraudAlerts", async(req, res)=>{
     try{
-        const fraudTransactions = await Transaction.find({isFraud: true}, "Amount Date riskScore fraudReason Merchant").sort({Date: -1}).limit(3);
+        const fraudTransactions = await Transaction.find({isFraud: true}, "Amount Date riskScore fraudReason reviewStatus reviewNotes Merchant Group").sort({Date: -1});
         res.status(200).json(fraudTransactions);
     } catch (err){
         res.status(500).json({error: "Error while fetching fraud alerts"})
     }
 
 })
+
+router.get("/fraudAlertsPending", async (req, res) => {
+  try {
+    const alerts = await Transaction.find(
+      { isFraud: true, reviewStatus: "pending" },
+      "Amount Date riskScore fraudReason reviewStatus Merchant Group"
+    ).sort({ Date: -1 });
+    res.status(200).json(alerts);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching pending fraud alerts" });
+  }
+});
+
+router.get("/fraudAlertsDashboard", async (req, res) => {
+  try {
+    const fraudTransactions = await Transaction.find({ isFraud: true }, "Amount Date riskScore fraudReason reviewStatus reviewNotes Merchant Group").sort({ Date: -1 }).limit(3);
+    res.status(200).json(fraudTransactions);
+  } catch (err) {
+    res.status(500).json({ error: "Error while fetching fraud alerts" });
+  }
+});
+
 // Approve transaction
 router.put("/fraud/approve/:id", async (req, res) => {
   const tx = await Transaction.findByIdAndUpdate(
@@ -123,12 +146,20 @@ router.post("/addTransaction", async(req, res) => {
             "Shipping Address": data.shippingAddress,
 
             isFraud: fraud,
-            riskScore,
+            riskScore: riskScore,
             fraudReason: Array.isArray(reason) ? reason.join(", ") : reason
         });       
     
         await transaction.save()
+        const budget = await Budget.findOne({
+            user: req.user._id,
+            category: transaction["Merchant Group"]
+        });
 
+        if (budget) {
+            budget.spent += transaction.Amount;
+            await budget.save();
+}
     
         res.status(201).json({message: "Transaction saved successfully", fraud, riskScore, reason});
     }
@@ -209,10 +240,6 @@ router.post("/getAllBudgets", async(req, res)=>{
         const userId = req.user._id;
 
         const budgets = await Budget.find({user: userId}).sort({createdAt: -1});
-
-        if (!budgets.length){
-            return res.status(200).json({message: "No budgets found"});
-        }
 
         res.status(200).json(budgets);
     }catch (err){

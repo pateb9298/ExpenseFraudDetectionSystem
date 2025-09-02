@@ -6,16 +6,14 @@ import {
 import { api } from "../utils/api";
 import '../styles/Dashboard.css';
 import { AuthContext } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
-
+import { useNavigate, Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [spendingData, setSpendingData] = useState([]);
-  const [categoryData, setCategoryData] = useState([]);
   const [fraudAlerts, setFraudAlerts] = useState([]);
+  const [unapprovedFraudCount, setUnapprovedFraudCount] = useState(0);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [budgetData, setBudgetData] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -30,50 +28,80 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user) return;
 
+    // Fetch Transactions
     const fetchTransactions = async () => {
       try {
-        const { data } = await api.get("/recentTransactions");
-        setRecentTransactions(data);
+        const { data } = await api.get("/auth/recentTransactions");
+        const normalized = data.map(t => ({
+          ...t,
+          merchant: t["Merchant Group"] || t.merchant,
+          amount: t.Amount,
+          date: t.Date,
+          category: t["Type of Transaction"] || t.category,
+          flagged: t.isFraud
+        }));
+        setRecentTransactions(normalized);
 
+        // Spending Trends
         const monthTotals = {};
-        data.forEach(t => {
+        normalized.forEach(t => {
           const month = new Date(t.date).toLocaleString('default', { month: 'short' });
           monthTotals[month] = (monthTotals[month] || 0) + t.amount;
         });
         setSpendingData(Object.keys(monthTotals).map(month => ({ month, amount: monthTotals[month] })));
-
-        const categories = {};
-        data.forEach(t => {
-          categories[t.category] = (categories[t.category] || 0) + t.amount;
-        });
-        setCategoryData(Object.keys(categories).map(key => ({ name: key, value: categories[key] })));
       } catch (err) {
         console.error("Error fetching transactions:", err);
       }
     };
 
+    // Fetch Budgets
     const fetchBudgets = async () => {
       try {
-        const { data } = await api.post("/getAllBudgets");
+        const { data } = await api.post("/auth/getAllBudgets");
         setBudgetData(data);
       } catch (err) {
         console.error("Error fetching budgets:", err);
       }
     };
 
+    // Fetch Fraud Alerts for list (limited)
     const fetchFraudAlerts = async () => {
       try {
-        const { data } = await api.get("/fraudAlerts");
-        setFraudAlerts(data);
+        const { data } = await api.get("/auth/fraudAlertsDashboard");
+        const normalized = data.map(alert => ({
+          ...alert,
+          merchant: alert["Merchant Group"] || alert.merchant,
+          amount: alert.Amount,
+          date: alert.Date,
+          location: alert["Country of Transaction"] || alert.location
+        }));
+        setFraudAlerts(normalized);
       } catch (err) {
         console.error("Error fetching fraud alerts:", err);
+      }
+    };
+
+    // Fetch all unapproved fraud alerts for the card count
+    const fetchUnapprovedFraudAlerts = async () => {
+      try {
+        const { data } = await api.get("/auth/fraudAlertsPending");
+        setUnapprovedFraudCount(data.length);
+      } catch (err) {
+        console.error("Error fetching unapproved fraud alerts:", err);
       }
     };
 
     fetchTransactions();
     fetchBudgets();
     fetchFraudAlerts();
+    fetchUnapprovedFraudAlerts();
   }, [user]);
+
+  // PieChart data for budgets
+  const budgetPieData = budgetData.map(b => ({
+    name: b.category,
+    value: b.spent, // or b.limit - b.spent for remaining
+  }));
 
   const totalSpent = spendingData.reduce((acc, t) => acc + t.amount, 0);
   const totalBudgetRemaining = budgetData.reduce((acc, b) => acc + (b.limit - b.spent), 0);
@@ -82,39 +110,34 @@ export default function Dashboard() {
     <div className="dashboard">
       {/* Navbar */}
       <nav className="navbar">
-  <div className="navbar-left">
-    {user && (
-      <div className="navbar-profile">
-        <div 
-          className="profile-circle" 
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-        >
-          {user.email.charAt(0).toUpperCase()}
+        <div className="navbar-left">
+          {user && (
+            <div className="navbar-profile">
+              <div className="profile-circle" onClick={() => setDropdownOpen(!dropdownOpen)}>
+                {user.email.charAt(0).toUpperCase()}
+              </div>
+              {dropdownOpen && (
+                <div className="profile-dropdown">
+                  <button onClick={handleLogout}>Sign Out</button>
+                </div>
+              )}
+            </div>
+          )}
+          <div className="navbar-logo">💰 FinanceGuard</div>
         </div>
-        {dropdownOpen && (
-          <div className="profile-dropdown">
-            <button onClick={handleLogout}>Sign Out</button>
-          </div>
-        )}
-      </div>
-    )}
-    <div className="navbar-logo">💰 FinanceApp</div>
-  </div>
-
-  <ul className="navbar-links">
-    <li><Link to="/">Dashboard</Link></li>
-    <li><Link to="/add-expense">Add Expense</Link></li>
-    <li><Link to="/transactions">Transactions</Link></li>
-    <li><Link to="/fraud-review">Fraud Review</Link></li>
-    <li><Link to="/budgets">Budgets</Link></li>
-  </ul>
-</nav>
-
+        <ul className="navbar-links">
+          <li><Link to="/">Dashboard</Link></li>
+          <li><Link to="/add-expense">Add Expense</Link></li>
+          <li><Link to="/transactions">Transactions</Link></li>
+          <li><Link to="/fraud-review">Fraud Review</Link></li>
+          <li><Link to="/budgets">Budgets</Link></li>
+        </ul>
+      </nav>
 
       {/* Motto */}
       <div className="motto-box">
         <div className="motto-logo">🛡️ FinanceGuard</div>
-        <p className="motto-text">"Guarding your finances, one transaction at a time."</p>
+        <p className="motto-text">Guarding your finances, one transaction at a time.</p>
       </div>
 
       {/* Top Cards */}
@@ -131,7 +154,7 @@ export default function Dashboard() {
         </div>
         <div className="card">
           <h3>Flagged Transactions</h3>
-          <p className="amount">{fraudAlerts.length}</p>
+          <p className="amount">{unapprovedFraudCount}</p>
           <span className="subtext red">Requires attention</span>
         </div>
         <div className="card">
@@ -156,18 +179,18 @@ export default function Dashboard() {
           </ResponsiveContainer>
         </div>
         <div className="chart-card">
-          <h3>Category Breakdown</h3>
+          <h3>Budget Breakdown</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
-                data={categoryData}
+                data={budgetPieData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
                 outerRadius={80}
                 dataKey="value"
               >
-                {categoryData.map((entry, index) => (
+                {budgetPieData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -190,10 +213,6 @@ export default function Dashboard() {
             <h3>{alert.merchant} - ${alert.amount}</h3>
             <p className="location">{alert.location || "Unknown"}</p>
             <p className="note"><em>Potential fraud detected</em></p>
-            <div className="alert-actions">
-              <button className="approve">✔️ Approve</button>
-              <button className="block">❌ Block</button>
-            </div>
           </div>
         ))}
       </div>

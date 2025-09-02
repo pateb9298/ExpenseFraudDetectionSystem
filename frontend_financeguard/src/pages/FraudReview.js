@@ -45,7 +45,7 @@ const FraudReview = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        `http://localhost:5000/api/fraud/approve/${id}`,
+        `http://localhost:5000/api/auth/fraud/approve/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -61,7 +61,7 @@ const FraudReview = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        `http://localhost:5000/api/fraud/reject/${id}`,
+        `http://localhost:5000/api/auth/fraud/reject/${id}`,
         { notes: notes[id] || "" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
