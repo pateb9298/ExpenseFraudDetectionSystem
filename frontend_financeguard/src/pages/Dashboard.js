@@ -123,7 +123,7 @@ export default function Dashboard() {
               )}
             </div>
           )}
-          <div className="navbar-logo">💰 FinanceGuard</div>
+          <div className="navbar-logo">FinanceGuard AI</div>
         </div>
         <ul className="navbar-links">
           <li><Link to="/">Dashboard</Link></li>
@@ -136,7 +136,7 @@ export default function Dashboard() {
 
       {/* Motto */}
       <div className="motto-box">
-        <div className="motto-logo">🛡️ FinanceGuard</div>
+        <div className="motto-logo">🛡️ FinanceGuard AI</div>
         <p className="motto-text">Guarding your finances, one transaction at a time.</p>
       </div>
 
