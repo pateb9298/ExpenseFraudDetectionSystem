@@ -13,7 +13,7 @@ const Transactions = () => {
     const fetchTransactions = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/auth/getAllTransactions", {
+        const res = await axios.get("https://financeguard-ai.onrender.com/api/auth/getAllTransactions", {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("Fetched transactions:", res.data); 
@@ -28,7 +28,7 @@ const Transactions = () => {
   const handleSearch = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/auth/search", {
+      const res = await axios.get("https://financeguard-ai.onrender.com/auth/search", {
         headers: { Authorization: `Bearer ${token}` },
         params: { merchant: search },
       });

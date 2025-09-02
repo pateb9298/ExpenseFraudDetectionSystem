@@ -25,7 +25,7 @@ export default function Budgets() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:5000/api/auth/getAllBudgets",
+        "https://financeguard-ai.onrender.com/api/auth/getAllBudgets",
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -47,7 +47,7 @@ export default function Budgets() {
     try {
       if (editMode) {
         const res = await axios.put(
-          `http://localhost:5000/api/auth/edit/budget/${currentBudgetId}`,
+          `https://financeguard-ai.onrender.com/api/auth/edit/budget/${currentBudgetId}`,
           newBudget,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -55,7 +55,7 @@ export default function Budgets() {
           prev.map((b) => (b._id === currentBudgetId ? res.data.item : b))
         );
       } else {
-        const res = await axios.post("http://localhost:5000/api/auth/addBudget", newBudget, {
+        const res = await axios.post("https://financeguard-ai.onrender.com/api/auth/addBudget", newBudget, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBudgets([res.data.budget, ...budgets]);
@@ -82,7 +82,7 @@ export default function Budgets() {
     if (!window.confirm("Are you sure you want to delete this budget?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/auth/delete/budget/${id}`, {
+      await axios.delete(`https://financeguard-ai.onrender.com/api/auth/delete/budget/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBudgets((prev) => prev.filter((b) => b._id !== id));

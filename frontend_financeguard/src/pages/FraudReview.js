@@ -18,7 +18,7 @@ const FraudReview = () => {
     const fetchFraud = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/auth/fraudAlerts", {
+        const res = await axios.get("https://financeguard-ai.onrender.com/api/auth/fraudAlerts", {
           headers: { Authorization: `Bearer ${token}` },
         });
         // Separate into pending + history
@@ -45,7 +45,7 @@ const FraudReview = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        `http://localhost:5000/api/auth/fraud/approve/${id}`,
+        `https://financeguard-ai.onrender.com/api/auth/fraud/approve/${id}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -61,7 +61,7 @@ const FraudReview = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        `http://localhost:5000/api/auth/fraud/reject/${id}`,
+        `https://financeguard-ai.onrender.com/api/auth/fraud/reject/${id}`,
         { notes: notes[id] || "" },
         { headers: { Authorization: `Bearer ${token}` } }
       );

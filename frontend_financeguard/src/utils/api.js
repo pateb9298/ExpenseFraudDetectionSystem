@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://financeguard-ai.onrender.com/api";
 
 const getToken = () => localStorage.getItem("token");
 
