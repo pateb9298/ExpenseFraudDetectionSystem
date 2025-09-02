@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "../styles/Budgets.css";
+import { Link } from "react-router-dom";
 
-const Budgets = () => {
-  const [budgets, setBudgets] = useState([
-    { id: 1, category: "Food & Dining", icon: "🍔", spent: 700, limit: 500 },
-    { id: 2, category: "Transportation", icon: "🚗", spent: 0, limit: 200 },
-    { id: 3, category: "Shopping", icon: "🛍️", spent: 0, limit: 800 },
-    { id: 4, category: "Entertainment", icon: "🎬", spent: 0, limit: 300 },
-  ]);
 
+export default function Budgets() {
+  const [budgets, setBudgets] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [currentBudgetId, setCurrentBudgetId] = useState(null);
   const [newBudget, setNewBudget] = useState({
     category: "",
     icon: "",
@@ -17,29 +16,86 @@ const Budgets = () => {
     limit: "",
   });
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewBudget((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  // Fetch budgets from backend
+  useEffect(() => {
+    fetchBudgets();
+  }, []);
+
+  const fetchBudgets = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.post(
+        "/api/getAllBudgets",
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setBudgets(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error("Error fetching budgets:", err);
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewBudget((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!newBudget.category || !newBudget.limit) return;
+    const token = localStorage.getItem("token");
 
-    const newEntry = {
-      id: budgets.length + 1,
-      category: newBudget.category,
-      icon: newBudget.icon || "💡",
-      spent: parseFloat(newBudget.spent) || 0,
-      limit: parseFloat(newBudget.limit),
-    };
+    try {
+      if (editMode) {
+        const res = await axios.put(
+          `/api/edit/budget/${currentBudgetId}`,
+          newBudget,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setBudgets((prev) =>
+          prev.map((b) => (b._id === currentBudgetId ? res.data.item : b))
+        );
+      } else {
+        const res = await axios.post("/api/addBudget", newBudget, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setBudgets([res.data.budget, ...budgets]);
+      }
+      resetForm();
+    } catch (err) {
+      console.error("Error saving budget:", err);
+    }
+  };
 
-    setBudgets([...budgets, newEntry]);
+  const handleEdit = (budget) => {
+    setEditMode(true);
+    setCurrentBudgetId(budget._id);
+    setNewBudget({
+      category: budget.category,
+      icon: budget.icon,
+      spent: budget.spent,
+      limit: budget.limit,
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this budget?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`/api/delete/budget/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setBudgets((prev) => prev.filter((b) => b._id !== id));
+    } catch (err) {
+      console.error("Error deleting budget:", err);
+    }
+  };
+
+  const resetForm = () => {
     setNewBudget({ category: "", icon: "", spent: 0, limit: "" });
     setShowForm(false);
+    setEditMode(false);
+    setCurrentBudgetId(null);
   };
 
   return (
@@ -48,12 +104,12 @@ const Budgets = () => {
       <nav className="navbar">
         <div className="navbar-logo">💰 FinanceApp</div>
         <ul className="navbar-links">
-          <li><a href="/">Dashboard</a></li>
-          <li><a href="/add-expense">Add Expense</a></li>
-          <li><a href="/transactions">Transactions</a></li>
-          <li><a href="/fraud-review">Fraud Review</a></li>
-          <li><a href="/budgets">Budgets</a></li>
-        </ul>
+                  <li><Link to="/dashboard">Dashboard</Link></li>
+                  <li><Link to="/add-expense">Add Expense</Link></li>
+                  <li><Link to="/transactions">Transactions</Link></li>
+                  <li><Link to="/fraud-review">Fraud Review</Link></li>
+                  <li><Link to="/budgets">Budgets</Link></li>
+          </ul>
       </nav>
 
       {/* Page Header */}
@@ -65,7 +121,7 @@ const Budgets = () => {
         </button>
       </div>
 
-      {/* Budgets grid */}
+      {/* Budgets Grid */}
       <div className="budgets-grid">
         {budgets.map((b) => {
           const remaining = b.limit - b.spent;
@@ -73,7 +129,7 @@ const Budgets = () => {
           const percent = Math.min((b.spent / b.limit) * 100, 100);
 
           return (
-            <div className="budget-card" key={b.id}>
+            <div className="budget-card" key={b._id}>
               <div className="budget-header">
                 <span className="budget-icon">{b.icon}</span>
                 <h3 className="budget-title">{b.category}</h3>
@@ -92,15 +148,17 @@ const Budgets = () => {
                 <span>0%</span>
                 <span>${b.limit.toFixed(2)} Limit</span>
               </div>
-              <p
-                className={`budget-status ${
-                  overBudget ? "over-budget" : "under-budget"
-                }`}
-              >
+              <p className={`budget-status ${overBudget ? "over-budget" : "under-budget"}`}>
                 {overBudget
                   ? `You're $${Math.abs(remaining).toFixed(2)} over budget!`
                   : `$${remaining.toFixed(2)} remaining.`}
               </p>
+
+              {/* Edit & Delete */}
+              <div className="budget-actions">
+                <button onClick={() => handleEdit(b)}>✏️ Edit</button>
+                <button onClick={() => handleDelete(b._id)}>🗑️ Delete</button>
+              </div>
             </div>
           );
         })}
@@ -110,7 +168,7 @@ const Budgets = () => {
       {showForm && (
         <div className="modal-overlay">
           <div className="modal">
-            <h3>Add New Budget</h3>
+            <h3>{editMode ? "Edit Budget" : "Add New Budget"}</h3>
             <form onSubmit={handleSubmit} className="budget-form">
               <label>
                 Category:
@@ -152,8 +210,8 @@ const Budgets = () => {
                 />
               </label>
               <div className="form-actions">
-                <button type="submit">Add Budget</button>
-                <button type="button" onClick={() => setShowForm(false)}>
+                <button type="submit">{editMode ? "Save Changes" : "Add Budget"}</button>
+                <button type="button" onClick={resetForm}>
                   Cancel
                 </button>
               </div>
@@ -163,6 +221,4 @@ const Budgets = () => {
       )}
     </>
   );
-};
-
-export default Budgets;
+}

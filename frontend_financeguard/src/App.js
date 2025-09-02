@@ -1,30 +1,100 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard.js";   // <--- Make sure Dashboard.js is inside /src/pages
-import AddExpense from "./pages/AddExpense.js";
-import Transactions from "./pages/Transactions.js";
-import FraudReview from "./pages/FraudReview.js";
-import Budgets from "./pages/Budgets.js";
+import React, { useContext } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import AddExpense from "./pages/AddExpense";
+import Transactions from "./pages/Transactions";
+import FraudReview from "./pages/FraudReview";
+import Budgets from "./pages/Budgets";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import { AuthContext } from "./context/AuthContext";
 
+// PrivateRoute wrapper
+const PrivateRoute = ({ children }) => {
+  const { user } = useContext(AuthContext);
+  return user ? children : <Navigate to="/login" replace />;
+};
 
-
-import "./styles/App.css";
-
-// Placeholder pages until you design them
-// function AddExpense() {
-//   return <h1 style={{ padding: "2rem" }}>Add Expense Page (Coming Soon)</h1>;
-// }
+// PublicRoute wrapper
+const PublicRoute = ({ children }) => {
+  const { user } = useContext(AuthContext);
+  return !user ? children : <Navigate to="/dashboard" replace />;
+};
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/add-expense" element={<AddExpense />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/fraud-review" element={<FraudReview />} />
-        <Route path="/Budgets" element={<Budgets />} />
+        {/* Public Routes */}
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <Register />
+            </PublicRoute>
+          }
+        />
+
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/add-expense"
+          element={
+            <PrivateRoute>
+              <AddExpense />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <PrivateRoute>
+              <Transactions />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/fraud-review"
+          element={
+            <PrivateRoute>
+              <FraudReview />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/budgets"
+          element={
+            <PrivateRoute>
+              <Budgets />
+            </PrivateRoute>
+          }
+        />
+
+        {/* Catch-all route */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

@@ -1,94 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../styles/Transactions.css";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { FiFilter } from "react-icons/fi";
-
-const transactions = [
-  {
-    id: 1,
-    merchant: "Whole Foods Market",
-    date: "Jan 14, 2025",
-    category: "food",
-    amount: -85.5,
-    flagged: false,
-  },
-  {
-    id: 2,
-    merchant: "Starbucks Coffee",
-    date: "Jan 14, 2025",
-    category: "food",
-    amount: -12.75,
-    flagged: false,
-  },
-  {
-    id: 3,
-    merchant: "TechnoElectronics Ltd",
-    date: "Jan 13, 2025",
-    category: "shopping",
-    amount: -2450.0,
-    flagged: true,
-    risk: 85,
-  },
-  {
-    id: 4,
-    merchant: "Shell Gas Station",
-    date: "Jan 13, 2025",
-    category: "transport",
-    amount: -45.2,
-    flagged: false,
-  },
-  {
-    id: 5,
-    merchant: "SafeWay Online Services",
-    date: "Jan 12, 2025",
-    category: "other",
-    amount: -750.0,
-    flagged: true,
-    risk: 75,
-  },
-  {
-    id: 6,
-    merchant: "QuickShop Electronics",
-    date: "Jan 11, 2025",
-    category: "shopping",
-    amount: -1299.99,
-    flagged: true,
-    risk: 90,
-  },
-];
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Transactions = () => {
+  const [transactions, setTransactions] = useState([]);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5000/api/auth/getAllTransactions", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("Fetched transactions:", res.data); 
+        setTransactions(res.data);
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+      }
+    };
+    fetchTransactions();
+  }, []);
+
+  const handleSearch = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("http://localhost:5000/auth/search", {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { merchant: search },
+      });
+      setTransactions(res.data);
+    } catch (err) {
+      console.error("Search failed:", err);
+    }
+  };
+
   return (
     <>
-      {/* Navbar at the very top */}
       <nav className="navbar">
         <div className="navbar-logo">💰 FinanceApp</div>
         <ul className="navbar-links">
-          <li><a href="/">Dashboard</a></li>
-          <li><a href="/add-expense">Add Expense</a></li>
-          <li><a href="/transactions">Transactions</a></li>
-          <li><a href="/fraud-review">Fraud Review</a></li>
-          <li><a href="/budgets">Budgets</a></li>
+          <li><Link to="/dashboard">Dashboard</Link></li>
+          <li><Link to="/add-expense">Add Expense</Link></li>
+          <li><Link to="/transactions">Transactions</Link></li>
+          <li><Link to="/fraud-review">Fraud Review</Link></li>
+          <li><Link to="/budgets">Budgets</Link></li>
         </ul>
       </nav>
 
-      {/* Page content */}
       <div className="transactions-container">
         <h2 className="transactions-title">All Transactions</h2>
         <p className="transactions-subtitle">
           Search, filter, and review your spending history.
         </p>
 
-        {/* Search and filter row */}
+        {/* Search row */}
         <div className="transactions-search-row">
           <input
             type="text"
-            placeholder="Search by merchant or description..."
+            placeholder="Search by merchant..."
             className="transactions-search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="transactions-filter-btn">
-            <FiFilter size={18} />
-            Filters
+          <button className="transactions-filter-btn" onClick={handleSearch}>
+            <FiFilter size={18} /> Search
           </button>
         </div>
 
@@ -96,21 +75,21 @@ const Transactions = () => {
         <div className="transactions-list">
           {transactions.map((tx) => (
             <div
-              key={tx.id}
-              className={`transaction-item ${tx.flagged ? "flagged" : ""}`}
+              key={tx._id}
+              className={`transaction-item ${tx.isFraud ? "flagged" : ""}`}
             >
               <div className="transaction-left">
-                {tx.flagged && (
+                {tx.isFraud && (
                   <span className="flagged-icon">
                     <FaExclamationTriangle />
                   </span>
                 )}
                 <div className="transaction-info">
-                  <p className="transaction-merchant">{tx.merchant}</p>
+                  <p className="transaction-merchant">{tx["Merchant Group"]}</p>
                   <p className="transaction-date">
-                    {tx.date} •{" "}
-                    <span className={`category-tag ${tx.category}`}>
-                      {tx.category}
+                    {new Date(tx.Date).toLocaleDateString()} •{" "}
+                    <span className={`category-tag ${tx["Type of Transaction"]}`}>
+                      {tx["Type of Transaction"]}
                     </span>
                   </p>
                 </div>
@@ -118,14 +97,12 @@ const Transactions = () => {
 
               <div className="transaction-right">
                 <p className="transaction-amount">
-                  {tx.amount < 0
-                    ? `-$${Math.abs(tx.amount).toFixed(2)}`
-                    : `$${tx.amount.toFixed(2)}`}
+                  -${tx.Amount.toFixed(2)}
                 </p>
-                {tx.flagged && (
+                {tx.isFraud && (
                   <div className="flagged-details">
                     <span className="flagged-badge">Flagged</span>
-                    <span className="risk-score">Risk: {tx.risk}/100</span>
+                    <span className="risk-score">Risk: {tx.riskScore}/100</span>
                   </div>
                 )}
               </div>

@@ -1,42 +1,115 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from "recharts";
+import { api } from "../utils/api";
 import '../styles/Dashboard.css';
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 
 export default function Dashboard() {
-  // Dummy data for charts
-  const spendingData = [
-    { month: "Oct", amount: 2400 },
-    { month: "Nov", amount: 2800 },
-    { month: "Dec", amount: 3200 },
-    { month: "Jan", amount: 1800 },
-  ];
-
-  const categoryData = [
-    { name: "Food & Dining", value: 35 },
-    { name: "Shopping", value: 25 },
-    { name: "Transport", value: 15 },
-    { name: "Utilities", value: 20 },
-    { name: "Other", value: 5 },
-  ];
+  const { user, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [spendingData, setSpendingData] = useState([]);
+  const [categoryData, setCategoryData] = useState([]);
+  const [fraudAlerts, setFraudAlerts] = useState([]);
+  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [budgetData, setBudgetData] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const COLORS = ["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444"];
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchTransactions = async () => {
+      try {
+        const { data } = await api.get("/recentTransactions");
+        setRecentTransactions(data);
+
+        const monthTotals = {};
+        data.forEach(t => {
+          const month = new Date(t.date).toLocaleString('default', { month: 'short' });
+          monthTotals[month] = (monthTotals[month] || 0) + t.amount;
+        });
+        setSpendingData(Object.keys(monthTotals).map(month => ({ month, amount: monthTotals[month] })));
+
+        const categories = {};
+        data.forEach(t => {
+          categories[t.category] = (categories[t.category] || 0) + t.amount;
+        });
+        setCategoryData(Object.keys(categories).map(key => ({ name: key, value: categories[key] })));
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+      }
+    };
+
+    const fetchBudgets = async () => {
+      try {
+        const { data } = await api.post("/getAllBudgets");
+        setBudgetData(data);
+      } catch (err) {
+        console.error("Error fetching budgets:", err);
+      }
+    };
+
+    const fetchFraudAlerts = async () => {
+      try {
+        const { data } = await api.get("/fraudAlerts");
+        setFraudAlerts(data);
+      } catch (err) {
+        console.error("Error fetching fraud alerts:", err);
+      }
+    };
+
+    fetchTransactions();
+    fetchBudgets();
+    fetchFraudAlerts();
+  }, [user]);
+
+  const totalSpent = spendingData.reduce((acc, t) => acc + t.amount, 0);
+  const totalBudgetRemaining = budgetData.reduce((acc, b) => acc + (b.limit - b.spent), 0);
 
   return (
     <div className="dashboard">
       {/* Navbar */}
       <nav className="navbar">
-        <div className="navbar-logo">💰 FinanceApp</div>
-        <ul className="navbar-links">
-          <li><a href="/">Dashboard</a></li>
-          <li><a href="/add-expense">Add Expense</a></li>
-          <li><a href="/transactions">Transactions</a></li>
-          <li><a href="/fraud-review">Fraud Review</a></li>
-          <li><a href="/budgets">Budgets</a></li>
-        </ul>
-      </nav>
+  <div className="navbar-left">
+    {user && (
+      <div className="navbar-profile">
+        <div 
+          className="profile-circle" 
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        >
+          {user.email.charAt(0).toUpperCase()}
+        </div>
+        {dropdownOpen && (
+          <div className="profile-dropdown">
+            <button onClick={handleLogout}>Sign Out</button>
+          </div>
+        )}
+      </div>
+    )}
+    <div className="navbar-logo">💰 FinanceApp</div>
+  </div>
+
+  <ul className="navbar-links">
+    <li><Link to="/">Dashboard</Link></li>
+    <li><Link to="/add-expense">Add Expense</Link></li>
+    <li><Link to="/transactions">Transactions</Link></li>
+    <li><Link to="/fraud-review">Fraud Review</Link></li>
+    <li><Link to="/budgets">Budgets</Link></li>
+  </ul>
+</nav>
+
 
       {/* Motto */}
       <div className="motto-box">
@@ -48,22 +121,22 @@ export default function Dashboard() {
       <div className="top-cards">
         <div className="card">
           <h3>This Month Spent</h3>
-          <p className="amount">$0.00</p>
+          <p className="amount">${totalSpent.toFixed(2)}</p>
           <span className="subtext red">↑ +12% from last month</span>
         </div>
         <div className="card">
           <h3>Budget Remaining</h3>
-          <p className="amount">$1800.00</p>
+          <p className="amount">${totalBudgetRemaining.toFixed(2)}</p>
           <span className="subtext green">0.0% utilized</span>
         </div>
         <div className="card">
           <h3>Flagged Transactions</h3>
-          <p className="amount">3</p>
+          <p className="amount">{fraudAlerts.length}</p>
           <span className="subtext red">Requires attention</span>
         </div>
         <div className="card">
           <h3>Avg Daily Spending</h3>
-          <p className="amount">$0.00</p>
+          <p className="amount">${(totalSpent / 30).toFixed(2)}</p>
           <span className="subtext green">Based on current month</span>
         </div>
       </div>
@@ -82,7 +155,6 @@ export default function Dashboard() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-
         <div className="chart-card">
           <h3>Category Breakdown</h3>
           <ResponsiveContainer width="100%" height={250}>
@@ -106,78 +178,54 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Active Alerts */}
+      {/* Alerts Section */}
       <div className="alerts">
         <h2>⚠️ Fraud Alerts Require Your Attention</h2>
-
-        <div className="alert-card high-risk">
-          <div className="alert-header">
-            <span className="risk-badge high">HIGH RISK</span>
-            <span className="timestamp">2 min ago</span>
+        {fraudAlerts.map(alert => (
+          <div key={alert._id} className="alert-card high-risk">
+            <div className="alert-header">
+              <span className="risk-badge high">HIGH RISK</span>
+              <span className="timestamp">{new Date(alert.date).toLocaleTimeString()}</span>
+            </div>
+            <h3>{alert.merchant} - ${alert.amount}</h3>
+            <p className="location">{alert.location || "Unknown"}</p>
+            <p className="note"><em>Potential fraud detected</em></p>
+            <div className="alert-actions">
+              <button className="approve">✔️ Approve</button>
+              <button className="block">❌ Block</button>
+            </div>
           </div>
-          <h3>Amazon Purchase - $1,247.99</h3>
-          <p className="location">Seattle, WA</p>
-          <p className="note"><em>Unusual amount for merchant</em></p>
-          <div className="alert-actions">
-            <button className="approve">✔️ Approve</button>
-            <button className="block">❌ Block</button>
-          </div>
-        </div>
-
-        <div className="alert-card medium-risk">
-          <div className="alert-header">
-            <span className="risk-badge medium">MEDIUM RISK</span>
-            <span className="timestamp">15 min ago</span>
-          </div>
-          <h3>Gas Station - $89.50</h3>
-          <p className="location">Las Vegas, NV</p>
-          <p className="note"><em>Geographic anomaly</em></p>
-          <div className="alert-actions">
-            <button className="approve">✔️ Approve</button>
-            <button className="block">❌ Block</button>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Bottom Section */}
       <div className="bottom-section">
-        {/* Recent Transactions */}
         <div className="transactions">
           <h2>Recent Transactions</h2>
           <ul>
-            <li>
-              <span>Whole Foods Market</span>
-              <span className="expense">-$85.50</span>
-            </li>
-            <li className="flagged">
-              <span>TechnoElectronics Ltd</span>
-              <span className="expense">-$2450.00</span>
-            </li>
-            <li>
-              <span>Starbucks Coffee</span>
-              <span className="expense">-$12.75</span>
-            </li>
+            {recentTransactions.map(tx => (
+              <li key={tx._id} className={tx.flagged ? "flagged" : ""}>
+                <span>{tx.merchant}</span>
+                <span className="expense">${tx.amount.toFixed(2)}</span>
+              </li>
+            ))}
           </ul>
         </div>
 
-        {/* Budget Progress */}
         <div className="budget">
           <h2>Budget Progress</h2>
-          <div className="progress">
-            <label>Food</label>
-            <div className="bar"><div className="fill green" style={{width: "40%"}}></div></div>
-            <span>$198.25 / $500.00</span>
-          </div>
-          <div className="progress">
-            <label>Transport</label>
-            <div className="bar"><div className="fill orange" style={{width: "73%"}}></div></div>
-            <span>$145.20 / $200.00</span>
-          </div>
-          <div className="progress">
-            <label>Shopping</label>
-            <div className="bar"><div className="fill red" style={{width: "470%"}}></div></div>
-            <span>$3749.99 / $800.00</span>
-          </div>
+          {budgetData.map(b => {
+            const percent = Math.min((b.spent / b.limit) * 100, 100);
+            return (
+              <div className="progress" key={b._id}>
+                <label>{b.category}</label>
+                <div className="bar">
+                  <div className={`fill ${percent > 100 ? "red" : "green"}`} style={{width: `${percent}%`}}></div>
+                </div>
+                <span>${b.spent.toFixed(2)} / ${b.limit.toFixed(2)}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

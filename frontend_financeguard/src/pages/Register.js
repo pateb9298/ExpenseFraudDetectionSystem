@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../styles/Login.css";
+import { registerUser } from "../utils/api"; // import API helper
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -7,8 +8,8 @@ export default function Register() {
     email: "",
     password: "",
     confirmPassword: "",
-    first_name: "",
-    last_name: ""
+    firstName: "",
+    lastName: ""
   });
 
   const handleChange = (e) => {
@@ -23,28 +24,19 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          first_name: formData.first_name,
-          last_name: formData.last_name
-        }),
+      const { data } = await registerUser({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        alert("Registration successful! Please login.");
-        window.location.href = "/login";
-      } else {
-        alert(data.error || "Registration failed");
-      }
+      alert(data.message || "Registration successful! Please login.");
+      window.location.href = "/login";
     } catch (error) {
       console.error("Error registering:", error);
-      alert("Something went wrong.");
+      alert(error.response?.data?.error || "Something went wrong.");
     }
   };
 
@@ -53,10 +45,10 @@ export default function Register() {
       <h1>Create Account</h1>
       <form onSubmit={handleSubmit}>
         <label>First Name</label>
-        <input name="first_name" value={formData.first_name} onChange={handleChange} required />
+        <input name="firstName" value={formData.firstName} onChange={handleChange} required />
 
         <label>Last Name</label>
-        <input name="last_name" value={formData.last_name} onChange={handleChange} required />
+        <input name="lastName" value={formData.lastName} onChange={handleChange} required />
 
         <label>Username</label>
         <input name="username" value={formData.username} onChange={handleChange} required />

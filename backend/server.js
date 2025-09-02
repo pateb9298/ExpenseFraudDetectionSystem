@@ -1,27 +1,38 @@
-//Import required packages
-require("dotenv").config(); //Load environment variables from .env file
-console.log("MONGO_URI:", process.env.MONGO_URI);
-const express = require("express"); //Framework for building APIs
-const mongoose = require("mongoose"); //Library for MongoDB object modeling
+// server.js
 
-const app = express(); //Initialize Express app
+require("dotenv").config(); // Load environment variables from .env
 
-app.use(express.json()); //Middleware to parse JSON request bodies
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const app = express();
 
-//Connect to MongoDB using the URI from .env file
+// Middleware
+app.use(express.json());
+
+// Enable CORS for your frontend
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
+
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
-.then(()=>console.log("MongoDB connected"))
-.catch(err => console.error(err));
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
-//Test route to check if server is running
+// Test route
 app.get("/", (req, res) => {
-    res.send("Server is running");
+  res.send("Server is running");
 });
 
-//Import route handlers
-app.use("/building", require("./routes/building")); //Routes for buildings
-app.use("/routes", require("./routes/routes")); //Routes for routes
+// Routes
+// Make sure your routes export a router, e.g., router = express.Router()
+app.use("/api/auth", require("./routes/auth"));
 
-//Start the server on port (from env or 5000 default)
+console.log("MONGO_URI:", process.env.MONGO_URI);
+
+// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+

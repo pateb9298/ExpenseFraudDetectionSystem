@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
+import { loginUser } from "../utils/api"; // API helper
+import { AuthContext } from "../context/AuthContext";
 
-export default function Login({ setLoggedIn }) {
+export default function Login() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: "", password: "" });
+  const { login } = useContext(AuthContext); // Use AuthContext for login
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -13,24 +16,22 @@ export default function Login({ setLoggedIn }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      const { data } = await loginUser({
+        email: formData.email,
+        password: formData.password
       });
 
-      const data = await response.json();
+      // Save token in localStorage
+      localStorage.setItem("token", data.access_token);
 
-      if (response.ok) {
-        localStorage.setItem("token", data.access_token);
-        setLoggedIn(true);
-        navigate("/dashboard");
-      } else {
-        alert(data.error || "Login failed");
-      }
+      // Save user info in AuthContext
+      login({ email: formData.email, token: data.access_token });
+
+      // Redirect to dashboard
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error logging in:", error);
-      alert("Something went wrong.");
+      alert(error.response?.data?.error || "Login failed");
     }
   };
 
@@ -38,11 +39,23 @@ export default function Login({ setLoggedIn }) {
     <div className="auth-container">
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-        <label>Username</label>
-        <input name="username" value={formData.username} onChange={handleChange} required />
+        <label>Email</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
 
         <label>Password</label>
-        <input type="password" name="password" value={formData.password} onChange={handleChange} required />
+        <input
+          type="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
         <button type="submit">Login</button>
       </form>

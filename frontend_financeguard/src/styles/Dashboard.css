@@ -39,8 +39,7 @@ body::after {
   padding-bottom: 2rem;
 }
 
-/* Navbar */
-.navbar {
+/* Navbar */.navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,6 +49,12 @@ body::after {
   position: sticky;
   top: 0;
   z-index: 100;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* space between profile circle and logo */
 }
 
 .navbar-logo {
@@ -74,6 +79,23 @@ body::after {
 
 .navbar-links li a:hover {
   color: #4f46e5;
+}
+
+.navbar-profile {
+  position: relative;
+}
+
+.profile-circle {
+  width: 35px;
+  height: 35px;
+  background-color: #4f46e5;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 /* Motto Box */

@@ -11,12 +11,17 @@ const TransactionSchema = new mongoose.Schema({
     "Entry Mode": {type: String, required: true},
     "Type of Transaction": {type: String, required: true},
     "Merchant Group": {type: String, required: true},
-    "Country of Transaction": {type: String, required: True},
-    "Country of Residence": {type: String, required: True},
+    "Country of Transaction": {type: String, required: true},
+    "Country of Residence": {type: String, required: true},
     Bank: {type: String, required: true},
     Date: {type: Date, required: true},
     Time: {type: String, required: true},
-    Description: {type: String}
+    Description: {type: String},
+    isFraud: {type: Boolean, default: false},
+    riskScore: {type: Number, default: 0},
+    fraudReason: {type: String},
+    reviewStatus: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+    reviewNotes: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model("Transaction", TransactionSchema);
