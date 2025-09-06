@@ -1,13 +1,13 @@
 # AI-Powered Fraud Detection System & Expense Management
 This project is an AI-powered system that allows users to manually add expenses and instantly detects unusual or potentially fraudulent transactions. It also helps users monitor budgets, analyze spending trends, and review flagged transactions.
 
-# Features /
+# Features 
 - Instant fraud detection when users add transactions
 - Manual expense tracking and budget monitoring
 - AI-based anomaly detection and review for flagged transactions
 - Spending trend analysis and predictive insights
 
-# Tech Stack /
+# Tech Stack 
 - Frontend: React.js
 - Backend: Python, Node.js
 - Machine Learning: Pandas, Numpy (trained on Kaggle dataset)
