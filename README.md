@@ -9,8 +9,9 @@ This project is an AI-powered system that allows users to manually add expenses 
 
 # Tech Stack 
 - Frontend: React.js
-- Backend: Python, Node.js
-- Machine Learning: Pandas, Numpy (trained on Kaggle dataset)
+- Backend: Node.js + Express.js
+- Database: MongoDB + Mongoose
+- Machine Learning: Flask, scikit-learn, pandas & NumPy, joblib
 - Deployment: Netlify (frontend), Render (backend)
 
 # Installation / Setup
