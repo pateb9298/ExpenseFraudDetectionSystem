@@ -48,7 +48,6 @@ npm start
 The frontend will run at http://localhost:3000.
 
 # Usage
-- Open the live frontend link @ https://financeguardai.netlify.app/ or run locally.
 - Register to make a profile/login
 - Manually add expenses (Add Expense Page) to track transactions and detect fraud
 - The AI model will instantly flag any transactions that appear potentially fraudulent.
